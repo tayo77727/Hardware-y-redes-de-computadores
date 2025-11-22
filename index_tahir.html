@@ -1,0 +1,1375 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hardware y Redes</title>
+  <style>
+    /* =========================================================
+       ESTILOS GENERALES DEL SITIO
+       - Todo el CSS está comentado en español
+       - Diseño responsive utilizando flex y grid
+       - Fuentes del sistema (sin imports)
+       - Paleta simple y moderna
+       ========================================================= */
+
+    /* Habilita scroll suave para los enlaces internos del menú */
+    html {
+      scroll-behavior: smooth;
+    }
+
+    /* Fuente de sistema y reset básico */
+    :root {
+      /* Paleta de colores editable */
+      --bg: #0f172a;          /* Fondo principal (azul oscuro/gris) */
+      --card: #111827;        /* Fondo tarjetas */
+      --accent: #22d3ee;      /* Color de acento (cyan) */
+      --accent-2: #a78bfa;    /* Acento secundario (violeta) */
+      --text: #e5e7eb;        /* Texto principal (gris claro) */
+      --muted: #9ca3af;       /* Texto secundario (gris medio) */
+      --ok: #10b981;          /* Correcto (verde) */
+      --bad: #ef4444;         /* Incorrecto (rojo) */
+      --border: #1f2937;      /* Bordes sutiles */
+      --shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+      --radius: 14px;         /* Radio estándar para tarjetas */
+      --radius-sm: 10px;      /* Radio pequeño para chips/modales */
+      --maxw: 1100px;         /* Ancho máximo del contenido */
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, "Helvetica Neue", Arial, "Apple Color Emoji", "Segoe UI Emoji";
+      background: linear-gradient(180deg, #0b1220 0%, var(--bg) 100%);
+      color: var(--text);
+      line-height: 1.6;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    /* Contenedor central para limitar ancho y aplicar padding */
+    .container {
+      width: 100%;
+      max-width: var(--maxw);
+      margin: 0 auto;
+      padding: 24px;
+    }
+
+    /* =========================================================
+       ENCABEZADO + NAVEGACIÓN
+       - Barra fija superior con título y menú
+       - Menú hamburguesa funcional en móvil
+       ========================================================= */
+
+    header {
+      position: sticky;           /* Se mantiene visible al hacer scroll */
+      top: 0;
+      z-index: 1000;
+      background: rgba(17, 24, 39, 0.7);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .nav {
+      display: flex;              /* Uso de flex para alinear elementos */
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 14px 24px;
+      max-width: var(--maxw);
+      margin: 0 auto;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 700;
+      letter-spacing: 0.4px;
+    }
+
+    .brand svg {
+      width: 28px;
+      height: 28px;
+      flex: none;
+      filter: drop-shadow(0 2px 4px rgba(34, 211, 238, 0.35));
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .nav-links a {
+      padding: 8px 12px;
+      border-radius: 8px;
+      color: var(--muted);
+      border: 1px solid transparent;
+    }
+
+    .nav-links a:hover {
+      color: var(--text);
+      border-color: var(--border);
+      background: rgba(255, 255, 255, 0.03);
+    }
+
+    /* Botón especial del modal "Información del Proyecto" */
+    .info-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: linear-gradient(180deg, rgba(34, 211, 238, 0.15), rgba(167, 139, 250, 0.15));
+      color: var(--text);
+      cursor: pointer;
+    }
+
+    .info-btn:hover {
+      background: linear-gradient(180deg, rgba(34, 211, 238, 0.25), rgba(167, 139, 250, 0.25));
+    }
+
+    /* Botón hamburguesa visible solo en móvil */
+    .burger {
+      display: none;             /* Se muestra con media query */
+      background: none;
+      border: 1px solid var(--border);
+      color: var(--text);
+      border-radius: 10px;
+      padding: 8px 10px;
+      cursor: pointer;
+    }
+
+    .burger svg {
+      width: 22px;
+      height: 22px;
+    }
+
+    /* Menú móvil oculto por defecto, se despliega con clase .open */
+    .mobile-menu {
+      display: none;
+      flex-direction: column;
+      gap: 8px;
+      padding: 12px 24px 18px;
+      border-top: 1px solid var(--border);
+      background: rgba(17, 24, 39, 0.8);
+    }
+
+    .mobile-menu a {
+      padding: 10px 12px;
+      border-radius: 8px;
+      color: var(--muted);
+    }
+
+    .mobile-menu a:hover {
+      color: var(--text);
+      background: rgba(255, 255, 255, 0.03);
+    }
+
+    .mobile-menu.open {
+      display: flex;
+    }
+
+    /* =========================================================
+       HERO / INTRODUCCIÓN
+       - Sección inicial con título y objetivo del sitio
+       ========================================================= */
+
+    .hero {
+      padding: 40px 0 10px;
+    }
+
+    .hero-card {
+      display: grid;                 /* Uso de grid para layout del hero */
+      grid-template-columns: 1.2fr 1fr;
+      gap: 20px;
+      background: radial-gradient(1000px 500px at 10% 0%, rgba(34, 211, 238, 0.12), transparent 50%),
+                  radial-gradient(800px 500px at 90% 10%, rgba(167, 139, 250, 0.12), transparent 50%),
+                  var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 20px;
+    }
+
+    .hero h1 {
+      margin: 0 0 8px;
+      font-size: clamp(22px, 3.5vw, 36px);  /* Responsive a la anchura */
+    }
+
+    .hero p {
+      margin: 0 0 14px;
+      color: var(--muted);
+    }
+
+    .hero .chips {
+      display: flex;
+      flex-wrap: wrap;               /* Uso de flex con wrap */
+      gap: 10px;
+    }
+
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      border-radius: var(--radius-sm);
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border);
+      color: var(--text);
+    }
+
+    .chip svg {
+      width: 18px;
+      height: 18px;
+    }
+
+    .hero aside {
+      display: grid;
+      gap: 10px;
+      align-content: start;
+    }
+
+    .hero aside .note {
+      font-size: 0.95rem;
+      color: var(--muted);
+      border-left: 3px solid var(--accent);
+      padding-left: 12px;
+    }
+
+    /* =========================================================
+       SECCIONES EDUCATIVAS (Hardware y Redes)
+       - Tarjetas con grid responsive
+       ========================================================= */
+
+    section {
+      margin: 28px 0;
+    }
+
+    .section-title {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 12px;
+      font-weight: 700;
+      font-size: clamp(18px, 2.6vw, 28px);
+    }
+
+    .section-title svg {
+      width: 24px;
+      height: 24px;
+      flex: none;
+    }
+
+    .grid {
+      display: grid;                       /* Uso de grid para las tarjetas */
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px;
+      box-shadow: var(--shadow);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .card h3 {
+      margin: 0 0 6px;
+      font-size: 1.1rem;
+    }
+
+    .card p {
+      margin: 0;
+      color: var(--muted);
+    }
+
+    /* Estilos para las imágenes en las tarjetas */
+    .card-img {
+      width: 100%;
+      height: 150px;
+      object-fit: cover;
+      border-radius: 8px;
+      margin-bottom: 12px;
+      background-color: #1f2937;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    /* =========================================================
+       MODELO OSI INTERACTIVO
+       - Lista de las 7 capas
+       - Al hacer clic se abre un modal con información
+       ========================================================= */
+
+    .osi-list {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+    }
+
+    .osi-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      background: linear-gradient(180deg, rgba(167, 139, 250, 0.15), rgba(34, 211, 238, 0.15));
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 12px 14px;
+      cursor: pointer;
+    }
+
+    .osi-item:hover {
+      background: linear-gradient(180deg, rgba(167, 139, 250, 0.25), rgba(34, 211, 238, 0.25));
+    }
+
+    .osi-item span {
+      font-weight: 600;
+    }
+
+    /* Modal genérico reutilizado por OSI y "Información del Proyecto" */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      display: none;            /* Se activa con clase .open */
+      align-items: center;
+      justify-content: center;
+      background: rgba(0, 0, 0, 0.55);
+      z-index: 2000;
+      padding: 16px;
+    }
+
+    .modal-backdrop.open {
+      display: flex;
+    }
+
+    .modal {
+      width: 100%;
+      max-width: 700px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 16px;
+      animation: pop 180ms ease-out;
+    }
+
+    @keyframes pop {
+      from { transform: translateY(8px) scale(0.98); opacity: 0; }
+      to   { transform: translateY(0)   scale(1.00); opacity: 1; }
+    }
+
+    .modal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 8px;
+    }
+
+    .modal-header h3 {
+      margin: 0;
+    }
+
+    .close-btn {
+      background: none;
+      border: 1px solid var(--border);
+      color: var(--text);
+      border-radius: 10px;
+      padding: 6px 10px;
+      cursor: pointer;
+    }
+
+    .modal-content p {
+      color: var(--muted);
+      margin: 8px 0 0;
+    }
+
+    /* =========================================================
+       TOPOLOGÍAS DE RED
+       - Tarjetas simples con descripción
+       ========================================================= */
+
+    .topo-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+    }
+
+    /* =========================================================
+       QUIZ INTERACTIVO (5 Preguntas)
+       - Múltiple selección
+       - Muestra resultado y puntaje
+       ========================================================= */
+
+    .quiz {
+      display: grid;
+      gap: 14px;
+    }
+
+    .question {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 12px;
+    }
+
+    .answers {
+      display: grid;
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    .answers label {
+      display: grid;
+      grid-template-columns: 20px 1fr;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 10px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: rgba(255, 255, 255, 0.03);
+      cursor: pointer;
+    }
+
+    .quiz-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 14px;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      background: linear-gradient(180deg, rgba(34, 211, 238, 0.2), rgba(167, 139, 250, 0.2));
+      color: var(--text);
+      cursor: pointer;
+    }
+
+    .btn:hover {
+      background: linear-gradient(180deg, rgba(34, 211, 238, 0.3), rgba(167, 139, 250, 0.3));
+    }
+
+    .score {
+      font-weight: 700;
+      color: var(--accent);
+    }
+
+    .feedback {
+      font-weight: 600;
+    }
+
+    .feedback.ok {
+      color: var(--ok);
+    }
+
+    .feedback.bad {
+      color: var(--bad);
+    }
+
+    /* =========================================================
+       GLOSARIO CON BÚSQUEDA EN TIEMPO REAL
+       - Filtra términos mientras se escribe
+       ========================================================= */
+
+    .glosario {
+      display: grid;
+      gap: 12px;
+    }
+
+    .search {
+      display: grid;
+      grid-template-columns: 24px 1fr;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 12px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--card);
+    }
+
+    .search input {
+      background: transparent;
+      border: none;
+      outline: none;
+      color: var(--text);
+      font-size: 1rem;
+    }
+
+    .glosario-list {
+      display: grid;
+      gap: 10px;
+    }
+
+    .term {
+      display: grid;
+      gap: 6px;
+      padding: 12px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: rgba(255, 255, 255, 0.03);
+    }
+
+    .term h4 {
+      margin: 0;
+      font-size: 1rem;
+    }
+
+    .term p {
+      margin: 0;
+      color: var(--muted);
+    }
+
+    /* =========================================================
+       PIE DE PÁGINA
+       ========================================================= */
+
+    footer {
+      margin-top: 24px;
+      padding: 24px;
+      border-top: 1px solid var(--border);
+      color: var(--muted);
+      text-align: center;
+    }
+
+    /* =========================================================
+       RESPONSIVE (Media Queries)
+       - Ajustes para tablets y móviles
+       ========================================================= */
+
+    /* Tablet: reducir columnas de grid */
+    @media (max-width: 980px) {
+      .hero-card {
+        grid-template-columns: 1fr;  /* Pila el contenido del hero */
+      }
+      .grid {
+        grid-template-columns: repeat(2, 1fr); /* 2 columnas */
+      }
+      .osi-list {
+        grid-template-columns: 1fr;  /* Lista en una columna */
+      }
+      .topo-grid {
+        grid-template-columns: repeat(2, 1fr); /* 2 columnas */
+      }
+    }
+
+    /* Móvil: una columna y activación de menú hamburguesa */
+    @media (max-width: 640px) {
+      .nav-links {
+        display: none;             /* Se oculta el menú de escritorio */
+      }
+      .burger {
+        display: inline-flex;      /* Se muestra el botón hamburguesa */
+      }
+      .grid,
+      .topo-grid {
+        grid-template-columns: 1fr; /* 1 columna */
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- =========================================================
+       CONTENIDO HTML
+       - Todo comentado en español
+       - Secciones: Introducción, Hardware, Redes, OSI, Topologías, Quiz, Glosario
+       - Incluye menú navegable y modal de información del proyecto
+       ========================================================= -->
+
+  <!-- ENCABEZADO Y NAVEGACIÓN -->
+  <header>
+    <nav class="nav">
+      <!-- Marca del sitio (editable: cambiar el texto del span para tu título corto) -->
+      <div class="brand">
+        <!-- SVG inline (ícono simple de circuito como logo) -->
+        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M6 3h12M3 8h18M3 16h18M6 21h12" stroke="currentColor" stroke-width="1.5" opacity="0.5"/>
+          <circle cx="6" cy="8" r="1.5" fill="var(--accent)"/>
+          <circle cx="18" cy="16" r="1.5" fill="var(--accent-2)"/>
+        </svg>
+        <span>Hardware & Redes</span>
+      </div>
+
+      <!-- Enlaces de navegación de escritorio -->
+      <div class="nav-links">
+        <!-- Los href apuntan a IDs de sección para scroll suave -->
+        <a href="#intro">Introducción</a>
+        <a href="#hardware">Hardware</a>
+        <a href="#redes">Redes</a>
+        <a href="#osi">Modelo OSI</a>
+        <a href="#topologias">Topologías</a>
+        <a href="#quiz">Quiz</a>
+        <a href="#glosario">Glosario</a>
+        <!-- Botón que abre el modal de información del proyecto -->
+        <button class="info-btn" id="openInfo">
+          <!-- Ícono info en SVG inline -->
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.5"/>
+            <path d="M12 8v.01M11 11h2v5h-2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+          <span>Información</span>
+        </button>
+      </div>
+
+      <!-- Botón hamburguesa para móvil -->
+      <button class="burger" id="burgerBtn" aria-label="Abrir menú">
+        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M4 6h16M4 12h16M4 18h16" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
+        </svg>
+      </button>
+    </nav>
+
+    <!-- Menú móvil desplegable (los enlaces son los mismos) -->
+    <div class="mobile-menu" id="mobileMenu">
+      <a href="#intro">Introducción</a>
+      <a href="#hardware">Hardware</a>
+      <a href="#redes">Redes</a>
+      <a href="#osi">Modelo OSI</a>
+      <a href="#topologias">Topologías</a>
+      <a href="#quiz">Quiz</a>
+      <a href="#glosario">Glosario</a>
+      <button class="info-btn" id="openInfoMobile">
+        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.5"/>
+          <path d="M12 8v.01M11 11h2v5h-2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+        <span>Información del Proyecto</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- CONTENIDO PRINCIPAL -->
+  <main class="container">
+
+    <!-- INTRODUCCIÓN AL PROYECTO -->
+    <section id="intro" class="hero">
+      <div class="hero-card">
+        <div>
+          <h1>Introducción al proyecto</h1>
+          <p>
+            Este sitio educativo presenta conceptos clave de hardware y redes de
+            forma clara y práctica. Está diseñado para aprender lo esencial, interactuar
+            con el modelo OSI y reforzar el conocimiento con un quiz y un glosario.
+          </p>
+          <h2 style="margin:10px 0 6px;font-size:1.2rem;">¿Qué es hardware y redes?</h2>
+          <p>
+            El hardware es el conjunto de componentes físicos de un sistema computacional:
+            desde la CPU y la RAM hasta periféricos y dispositivos de almacenamiento.
+            Las redes conectan equipos para compartir datos y recursos mediante
+            dispositivos como switches y routers, empleando protocolos y direcciones IP.
+          </p>
+          <h2 style="margin:10px 0 6px;font-size:1.2rem;">Objetivo del sitio</h2>
+          <p>
+            Comprender los componentes fundamentales del hardware, los elementos
+            básicos de las redes y el modelo OSI, con ejemplos sencillos y
+            actividades de verificación del aprendizaje.
+          </p>
+          <!-- Chips de temas destacados (puedes editar los textos) -->
+          <div class="chips">
+            <span class="chip">
+              <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path d="M7 7h10v10H7z" stroke="currentColor" stroke-width="1.5"/>
+                <path d="M12 3v4M12 17v4M3 12h4M17 12h4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+              </svg>
+              CPU
+            </span>
+            <span class="chip">
+              <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <rect x="5" y="6" width="14" height="12" rx="2" stroke="currentColor" stroke-width="1.5"/>
+                <path d="M7 9h10M7 12h6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+              </svg>
+              Redes
+            </span>
+            <span class="chip">
+              <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.5"/>
+                <path d="M6 12h12M12 6v12" stroke="currentColor" stroke-width="1.5"/>
+              </svg>
+              Modelo OSI
+            </span>
+          </div>
+        </div>
+        <aside>
+          <!-- Nota rápida editable -->
+          <div class="note">
+            Este material es autocontenible: no requiere internet, bibliotecas
+            externas ni imágenes externas. Puedes reutilizarlo.
+          </div>
+          <!-- Botón para abrir información del proyecto también desde aquí -->
+          <button class="info-btn" id="openInfoHero">
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.5"/>
+              <path d="M12 8v.01M11 11h2v5h-2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+            </svg>
+            Ver información del proyecto
+          </button>
+        </aside>
+      </div>
+    </section>
+
+    <!-- HARDWARE -->
+    <section id="hardware">
+      <div class="section-title">
+        <!-- Ícono placa base -->
+        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <rect x="4" y="4" width="16" height="16" rx="2" stroke="currentColor" stroke-width="1.5"/>
+          <path d="M8 8h8v8H8z" stroke="currentColor" stroke-width="1.5"/>
+          <circle cx="7" cy="17" r="1" fill="var(--accent)"/>
+          <circle cx="17" cy="7" r="1" fill="var(--accent-2)"/>
+        </svg>
+        Hardware
+      </div>
+      <!-- Grid de 3 columnas en escritorio, se adapta vía media queries -->
+      <div class="grid">
+        <article class="card">
+          <img src="https://img.datacentermarket.es/wp-content/uploads/2023/09/01111216/AdobeStock_178835953.jpeg" alt="CPU" class="card-img">
+          <h3>CPU</h3>
+          <p>
+            La Unidad Central de Procesamiento ejecuta instrucciones y coordina el
+            funcionamiento del sistema. Su rendimiento depende de la frecuencia,
+            núcleos y arquitectura. Es el "cerebro" del computador.
+          </p>
+        </article>
+        <article class="card">
+          <img src="https://lexatecnologia.com/rails/active_storage/representations/proxy/eyJfcmFpbHMiOnsiZGF0YSI6OTI0MDUsInB1ciI6ImJsb2JfaWQifX0=--944c62dffc9abe8ff08ed093573f67371c08dc66/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJwbmciLCJyZXNpemVfdG9fZml0IjpbODAwLDgwMF19LCJwdXIiOiJ2YXJpYXRpb24ifX0=--cef66509c9cdc75663c0eefd9421db1d2ea4fead/1.png?locale=es" alt="CPU" class="card-img">
+          <h3>RAM</h3>
+          <p>
+            La memoria de acceso aleatorio almacena temporalmente datos que la CPU
+            necesita de forma rápida. Más RAM permite manejar más tareas simultáneas
+            sin recurrir a almacenamiento más lento.
+          </p>
+        </article>
+        <article class="card">
+          <img src="https://www.worldcomputers.com.ec/wp-content/uploads/2022/01/Diferencia-entre-la-unidad-de-disco-duro-HDD-y-la-unidad-de-estado-solido-SSD-2.jpg" alt="CPU" class="card-img">
+          <h3>Almacenamiento</h3>
+          <p>
+            Guarda datos de forma permanente. Los SSD ofrecen mayores velocidades
+            que los HDD tradicionales. El tipo y la interfaz (SATA, NVMe) impactan
+            en el rendimiento general.
+          </p>
+        </article>
+        <article class="card">
+          <img src="https://hardzone.es/app/uploads-hardzone.es/2018/03/Biostar-placas-base-e1634199349794.jpg" alt="CPU" class="card-img">
+          <h3>Placa base</h3>
+          <p>
+            Integra y conecta todos los componentes. Define compatibilidades (socket
+            de CPU, tipo de RAM, puertos) y distribuye energía y comunicaciones
+            entre dispositivos.
+          </p>
+        </article>
+        <article class="card">
+          <img src="https://mgainformatik.com/image-blog/fuentes-poder-computadoras.jpg" alt="CPU" class="card-img">
+          <h3>Fuente de poder</h3>
+          <p>
+            Suministra energía estable a todos los componentes. Su calidad y capacidad
+            afectan la estabilidad del sistema; se mide en watts y eficiencia.
+          </p>
+        </article>
+        <article class="card">
+          <img src="https://www.diloentutospc.com/wp-content/uploads/2023/03/perifericos-de-entrda-salida-y-mixtos-de-la-computadora.png" alt="CPU" class="card-img">
+          <h3>Periféricos</h3>
+          <p>
+            Dispositivos externos de entrada y salida como teclado, ratón, monitor,
+            impresora y cámaras. Amplían las capacidades de interacción del equipo.
+          </p>
+        </article>
+      </div>
+    </section>
+
+    <!-- REDES -->
+    <section id="redes">
+      <div class="section-title">
+        <!-- Ícono de red -->
+        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <circle cx="12" cy="6" r="3" stroke="currentColor" stroke-width="1.5"/>
+          <circle cx="6" cy="18" r="3" stroke="currentColor" stroke-width="1.5"/>
+          <circle cx="18" cy="18" r="3" stroke="currentColor" stroke-width="1.5"/>
+          <path d="M10 8l-3 8M14 8l3 8M9 18h6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+        Redes
+      </div>
+      <!-- Grid de conceptos de redes -->
+      <div class="grid">
+        <article class="card">
+          <img src="https://www.redeszone.net/app/uploads-redeszone.net/2015/12/D-Link-DGS-108.jpg?x=480&quality=80" alt="CPU" class="card-img">
+          <h3>Switch</h3>
+          <p>
+            Conecta múltiples dispositivos en una red local y reenvía tramas según
+            direcciones MAC, optimizando el tráfico dentro del segmento.
+          </p>
+        </article>
+        <article class="card">
+          <img src="https://www.redeszone.net/app/uploads-redeszone.net/2017/08/componentes-de-un-router.jpg" alt="CPU" class="card-img">
+          <h3>Router</h3>
+          <p>
+            Interconecta redes distintas y dirige paquetes según rutas e IP. Suele
+            proporcionar funciones de seguridad y NAT para acceso a internet.
+          </p>
+        </article>
+        <article class="card">
+          <img src="https://marketing21.hu/wp-content/uploads/2024/04/IP-cim-jelentese-1024x768.webp" alt="CPU" class="card-img">
+          <h3>IP</h3>
+          <p>
+            La dirección IP identifica de forma lógica a cada dispositivo. Puede ser
+            IPv4 (p. ej., 192.168.1.10) o IPv6. Permite el enrutamiento correcto.
+          </p>
+        </article>
+        <article class="card">
+          <img src="https://study-ccna.com/wp-content/images/dhcp_process_explained.jpg" alt="CPU" class="card-img">
+          <h3>DHCP</h3>
+          <p>
+            Protocolo que asigna automáticamente direcciones IP, máscara, puerta de
+            enlace y DNS a los clientes, simplificando la administración.
+          </p>
+        </article>
+        <article class="card">
+          <img src="https://co-media.hptiendaenlinea.com/magefan_blog/275ravam.png" alt="CPU" class="card-img">
+          <h3>DNS</h3>
+          <p>
+            Convierte nombres de dominio legibles (ej. ejemplo.com) en direcciones IP
+            numéricas. Facilita el acceso a servicios sin memorizar números.
+          </p>
+        </article>
+        <article class="card">
+          <img src="https://sistel.xp3.biz/redes/sn_imagen01.png" alt="CPU" class="card-img">
+          <h3>Subred (ejemplo)</h3>
+          <p>
+            En 192.168.1.0/24 hay 256 direcciones posibles (0–255). Usando /26 se
+            crean 4 subredes con 64 direcciones cada una, organizando mejor el tráfico.
+          </p>
+        </article>
+      </div>
+    </section>
+
+    <!-- MODELO OSI INTERACTIVO -->
+    <section id="osi">
+      <div class="section-title">
+        <!-- Ícono capas -->
+        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <rect x="5" y="4" width="14" height="3" rx="1" stroke="currentColor" stroke-width="1.5"/>
+          <rect x="5" y="9" width="14" height="3" rx="1" stroke="currentColor" stroke-width="1.5"/>
+          <rect x="5" y="14" width="14" height="3" rx="1" stroke="currentColor" stroke-width="1.5"/>
+          <rect x="5" y="19" width="14" height="3" rx="1" stroke="currentColor" stroke-width="1.5"/>
+        </svg>
+        Modelo OSI (interactivo)
+      </div>
+      <!-- Lista clicable de capas OSI; al hacer clic se abre modal -->
+      <div class="osi-list" id="osiList">
+        <!-- Cada elemento define data-layer para buscar contenido en JS -->
+        <div class="osi-item" data-layer="7">
+          <span>Capa 7: Aplicación</span>
+          <small>HTTP, SMTP</small>
+        </div>
+        <div class="osi-item" data-layer="6">
+          <span>Capa 6: Presentación</span>
+          <small>SSL/TLS, compresión</small>
+        </div>
+        <div class="osi-item" data-layer="5">
+          <span>Capa 5: Sesión</span>
+          <small>Gestión de sesiones</small>
+        </div>
+        <div class="osi-item" data-layer="4">
+          <span>Capa 4: Transporte</span>
+          <small>TCP, UDP</small>
+        </div>
+        <div class="osi-item" data-layer="3">
+          <span>Capa 3: Red</span>
+          <small>IP, enrutamiento</small>
+        </div>
+        <div class="osi-item" data-layer="2">
+          <span>Capa 2: Enlace de datos</span>
+          <small>Ethernet, MAC</small>
+        </div>
+        <div class="osi-item" data-layer="1">
+          <span>Capa 1: Física</span>
+          <small>Cables, señales</small>
+        </div>
+      </div>
+    </section>
+
+    <!-- TOPOLOGÍAS DE RED -->
+    <section id="topologias">
+      <div class="section-title">
+        <!-- Ícono topologías -->
+        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M12 4v16M4 12h16" stroke="currentColor" stroke-width="1.5" opacity="0.4"/>
+          <circle cx="12" cy="4" r="2" stroke="currentColor" stroke-width="1.5"/>
+          <circle cx="4" cy="12" r="2" stroke="currentColor" stroke-width="1.5"/>
+          <circle cx="20" cy="12" r="2" stroke="currentColor" stroke-width="1.5"/>
+          <circle cx="12" cy="20" r="2" stroke="currentColor" stroke-width="1.5"/>
+        </svg>
+        Topologías de red
+      </div>
+
+      <!-- Grid de topologías con descripciones -->
+      <div class="topo-grid">
+        <article class="card">
+          <h3>Bus</h3>
+          <p>
+            Todos los dispositivos comparten un único canal. Es simple y económica,
+            pero sufre colisiones y no escala bien.
+          </p>
+        </article>
+        <article class="card">
+          <h3>Estrella</h3>
+          <p>
+            Cada dispositivo se conecta a un nodo central (switch). Fácil de administrar
+            y aislar fallos, común en redes LAN modernas.
+          </p>
+        </article>
+        <article class="card">
+          <h3>Anillo</h3>
+          <p>
+            Los nodos forman un círculo y los datos viajan en una dirección. Tiene tolerancia
+            limitada a fallos si no hay mecanismos de redundancia.
+          </p>
+        </article>
+        <article class="card">
+          <h3>Malla</h3>
+          <p>
+            Múltiples conexiones entre nodos proporcionan alta redundancia y rutas alternativas,
+            mejorando disponibilidad y resiliencia.
+          </p>
+        </article>
+      </div>
+    </section>
+
+    <!-- QUIZ DE 5 PREGUNTAS -->
+    <section id="quiz">
+      <div class="section-title">
+        <!-- Ícono cuestionario -->
+        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <rect x="5" y="4" width="14" height="16" rx="2" stroke="currentColor" stroke-width="1.5"/>
+          <path d="M8 8h8M8 12h8M8 16h5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+        Quiz de Hardware y Redes
+      </div>
+
+      <!-- Bloque de preguntas; cada pregunta tiene opciones radio -->
+      <div class="quiz" id="quizBlock">
+        <!-- Pregunta 1 -->
+        <div class="question" data-id="q1">
+          <strong>1) ¿Qué componente ejecuta instrucciones y coordina el sistema?</strong>
+          <div class="answers">
+            <label><input type="radio" name="q1" value="a"> CPU</label>
+            <label><input type="radio" name="q1" value="b"> RAM</label>
+            <label><input type="radio" name="q1" value="c"> GPU</label>
+            <label><input type="radio" name="q1" value="d"> Fuente de poder</label>
+          </div>
+        </div>
+        <!-- Pregunta 2 -->
+        <div class="question" data-id="q2">
+          <strong>2) ¿Cuál dispositivo reenvía tramas en una LAN usando direcciones MAC?</strong>
+          <div class="answers">
+            <label><input type="radio" name="q2" value="a"> Router</label>
+            <label><input type="radio" name="q2" value="b"> Switch</label>
+            <label><input type="radio" name="q2" value="c"> Módem</label>
+            <label><input type="radio" name="q2" value="d"> Punto de acceso</label>
+          </div>
+        </div>
+        <!-- Pregunta 3 -->
+        <div class="question" data-id="q3">
+          <strong>3) ¿Qué protocolo asigna automáticamente IP, máscara y puerta de enlace?</strong>
+          <div class="answers">
+            <label><input type="radio" name="q3" value="a"> DNS</label>
+            <label><input type="radio" name="q3" value="b"> DHCP</label>
+            <label><input type="radio" name="q3" value="c"> HTTP</label>
+            <label><input type="radio" name="q3" value="d"> SMTP</label>
+          </div>
+        </div>
+        <!-- Pregunta 4 -->
+        <div class="question" data-id="q4">
+          <strong>4) ¿En qué capa del modelo OSI trabajan TCP y UDP?</strong>
+          <div class="answers">
+            <label><input type="radio" name="q4" value="a"> Capa 3 (Red)</label>
+            <label><input type="radio" name="q4" value="b"> Capa 4 (Transporte)</label>
+            <label><input type="radio" name="q4" value="c"> Capa 2 (Enlace)</label>
+            <label><input type="radio" name="q4" value="d"> Capa 7 (Aplicación)</label>
+          </div>
+        </div>
+        <!-- Pregunta 5 -->
+        <div class="question" data-id="q5">
+          <strong>5) ¿Cuál topología conecta todos los dispositivos a un nodo central?</strong>
+          <div class="answers">
+            <label><input type="radio" name="q5" value="a"> Bus</label>
+            <label><input type="radio" name="q5" value="b"> Malla</label>
+            <label><input type="radio" name="q5" value="c"> Estrella</label>
+            <label><input type="radio" name="q5" value="d"> Anillo</label>
+          </div>
+        </div>
+      </div>
+
+      <!-- Acciones del quiz y resultados -->
+      <div class="quiz-actions">
+        <button class="btn" id="checkQuiz">
+          <!-- Ícono check -->
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M5 13l4 4L19 7" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
+          </svg>
+          Revisar respuestas
+        </button>
+        <button class="btn" id="resetQuiz">
+          <!-- Ícono reset -->
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M12 6v6l4 2" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
+            <path d="M21 12a9 9 0 1 1-9-9" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
+          </svg>
+          Reiniciar
+        </button>
+        <span class="score" id="scoreText">Puntaje: 0/5</span>
+        <span class="feedback" id="feedbackText"></span>
+      </div>
+    </section>
+
+    <!-- GLOSARIO CON BÚSQUEDA -->
+    <section id="glosario">
+      <div class="section-title">
+        <!-- Ícono glosario -->
+        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M6 4h9a3 3 0 0 1 3 3v13l-4-2-4 2-4-2-4 2V7a3 3 0 0 1 3-3z" stroke="currentColor" stroke-width="1.5"/>
+          <path d="M8 8h8M8 11h8M8 14h6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+        Glosario
+      </div>
+
+      <!-- Campo de búsqueda que filtra en tiempo real -->
+      <div class="search">
+        <!-- Ícono lupa -->
+        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <circle cx="11" cy="11" r="6" stroke="currentColor" stroke-width="1.5"/>
+          <path d="M20 20l-4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+        <input type="text" id="searchInput" placeholder="Buscar término (ej. IP, DNS, CPU)">
+      </div>
+
+      <!-- Lista de términos (editable: puedes agregar, quitar o modificar) -->
+      <div class="glosario-list" id="glosarioList">
+        <div class="term" data-term="CPU">
+          <h4>CPU</h4>
+          <p>Unidad Central de Procesamiento; ejecuta instrucciones y coordina el sistema.</p>
+        </div>
+        <div class="term" data-term="RAM">
+          <h4>RAM</h4>
+          <p>Memoria temporal de acceso rápido utilizada por la CPU para tareas activas.</p>
+        </div>
+        <div class="term" data-term="SSD">
+          <h4>SSD</h4>
+          <p>Dispositivo de almacenamiento sólido, más rápido que los discos duros tradicionales.</p>
+        </div>
+        <div class="term" data-term="Switch">
+          <h4>Switch</h4>
+          <p>Dispositivo que reenvía tramas dentro de una LAN utilizando direcciones MAC.</p>
+        </div>
+        <div class="term" data-term="Router">
+          <h4>Router</h4>
+          <p>Interconecta redes distintas y decide rutas para los paquetes según IP.</p>
+        </div>
+        <div class="term" data-term="DHCP">
+          <h4>DHCP</h4>
+          <p>Protocolo que asigna de forma automática configuraciones IP a los clientes.</p>
+        </div>
+        <div class="term" data-term="DNS">
+          <h4>DNS</h4>
+          <p>Servicio que traduce nombres de dominio en direcciones IP numéricas.</p>
+        </div>
+        <div class="term" data-term="OSI">
+          <h4>OSI</h4>
+          <p>Modelo de referencia con 7 capas que guía el diseño y operación de redes.</p>
+        </div>
+        <div class="term" data-term="Subred">
+          <h4>Subred</h4>
+          <p>Segmento de una red IP con máscara que delimita el rango de direcciones.</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- PIE DE PÁGINA -->
+  <footer>
+    <!-- Texto del pie (editable: puedes cambiar el mensaje) -->
+    © 2025 • Material educativo de Hardware y Redes — Hecho con HTML, CSS y JavaScript puro.
+  </footer>
+
+  <!-- MODAL GENÉRICO (REUTILIZADO POR OSI Y POR INFORMACIÓN DEL PROYECTO) -->
+  <div class="modal-backdrop" id="modalBackdrop" aria-hidden="true">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+      <div class="modal-header">
+        <!-- Título del modal (JS lo cambia dinámicamente) -->
+        <h3 id="modalTitle">Título del modal</h3>
+        <button class="close-btn" id="closeModal">Cerrar</button>
+      </div>
+      <div class="modal-content" id="modalContent">
+        <!-- Contenido dinámico del modal -->
+        <p>Contenido del modal...</p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // =========================================================
+    // JAVASCRIPT DEL SITIO
+    // - Totalmente comentado en español
+    // - Sin librerías externas
+    // - Controla: menú hamburguesa, modales, OSI interactivo,
+    //   quiz de 5 preguntas y glosario filtrable
+    // =========================================================
+
+    // -------------------------------
+    // MENÚ HAMBURGUESA (MÓVIL)
+    // -------------------------------
+    const burgerBtn = document.getElementById('burgerBtn');     // Botón hamburguesa
+    const mobileMenu = document.getElementById('mobileMenu');   // Contenedor del menú móvil
+
+    // Alterna la clase .open para mostrar/ocultar el menú móvil
+    burgerBtn.addEventListener('click', () => {
+      mobileMenu.classList.toggle('open');
+    });
+
+    // Cierra el menú móvil al hacer clic en un enlace
+    mobileMenu.querySelectorAll('a').forEach(link => {
+      link.addEventListener('click', () => {
+        mobileMenu.classList.remove('open');
+      });
+    });
+
+    // -------------------------------
+    // MODAL GENÉRICO
+    // -------------------------------
+    const modalBackdrop = document.getElementById('modalBackdrop'); // Fondo oscurecido del modal
+    const modalTitle = document.getElementById('modalTitle');       // Título dinámico del modal
+    const modalContent = document.getElementById('modalContent');   // Cuerpo del modal
+    const closeModalBtn = document.getElementById('closeModal');    // Botón de cerrar
+
+    // Función para abrir el modal con título y contenido HTML
+    function openModal(title, htmlContent) {
+      modalTitle.textContent = title;
+      modalContent.innerHTML = htmlContent;
+      modalBackdrop.classList.add('open');
+      modalBackdrop.setAttribute('aria-hidden', 'false');
+    }
+
+    // Función para cerrar el modal
+    function closeModal() {
+      modalBackdrop.classList.remove('open');
+      modalBackdrop.setAttribute('aria-hidden', 'true');
+    }
+
+    // Cerrar modal con botón
+    closeModalBtn.addEventListener('click', closeModal);
+
+    // Cerrar modal al hacer clic fuera de la ventana (en el backdrop)
+    modalBackdrop.addEventListener('click', (e) => {
+      const isBackdrop = e.target === modalBackdrop;
+      if (isBackdrop) closeModal();
+    });
+
+    // -------------------------------
+    // INFORMACIÓN DEL PROYECTO (MODAL)
+    // -------------------------------
+    // Botones que disparan el modal de información del proyecto (puedes editar los textos)
+    const openInfoButtons = [
+      document.getElementById('openInfo'),
+      document.getElementById('openInfoMobile'),
+      document.getElementById('openInfoHero')
+    ].filter(Boolean);
+
+    openInfoButtons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        // Contenido del modal: información del proyecto (editable)
+        const infoHTML = `
+          <div style="display:grid;gap:8px">
+            <p><strong>Nombre del proyecto:</strong> Hardware y Redes — Guía interactiva</p>
+            <p><strong>Autor:</strong> Tahir Delgahan Aritama</p>
+            <p><strong>Curso:</strong> Hardware y redes de computadores</p>
+            <p><strong>Universidad:</strong> Universidad del Magdalena</p>
+            <p><strong>Año:</strong> 2025</p>
+            <hr style="border-color: var(--border); opacity:0.6">
+            <p style="color:var(--muted)">
+            
+            </p>
+          </div>
+        `;
+        openModal('Información del Proyecto', infoHTML);
+      });
+    });
+
+    // -------------------------------
+    // MODELO OSI INTERACTIVO
+    // -------------------------------
+    const osiList = document.getElementById('osiList'); // Contenedor de elementos OSI
+
+    // Mapa de capas OSI a contenido HTML (editable: puedes modificar textos y ejemplos)
+    const osiData = {
+      7: {
+        title: 'Capa 7: Aplicación',
+        html: `
+          <p><strong>Funciones:</strong> Interacción directa con el usuario y aplicaciones; acceso a servicios de red.</p>
+          <p><strong>Ejemplos:</strong> HTTP (navegación web), SMTP (correo), FTP (transferencia de archivos).</p>
+        `
+      },
+      6: {
+        title: 'Capa 6: Presentación',
+        html: `
+          <p><strong>Funciones:</strong> Formato de datos, cifrado y compresión para que distintas aplicaciones se entiendan.</p>
+          <p><strong>Ejemplos:</strong> SSL/TLS (cifrado), conversión de formatos como JSON/XML.</p>
+        `
+      },
+      5: {
+        title: 'Capa 5: Sesión',
+        html: `
+          <p><strong>Funciones:</strong> Establecer, mantener y finalizar sesiones entre dispositivos.</p>
+          <p><strong>Ejemplos:</strong> Gestión de sesiones en aplicaciones, RPC, autenticación persistente.</p>
+        `
+      },
+      4: {
+        title: 'Capa 4: Transporte',
+        html: `
+          <p><strong>Funciones:</strong> Entrega de extremo a extremo, control de flujo y errores.</p>
+          <p><strong>Ejemplos:</strong> TCP (confiable), UDP (rápido, sin confirmación).</p>
+        `
+      },
+      3: {
+        title: 'Capa 3: Red',
+        html: `
+          <p><strong>Funciones:</strong> Enrutamiento y direccionamiento lógico entre redes.</p>
+          <p><strong>Ejemplos:</strong> IP, protocolos de enrutamiento (OSPF, BGP).</p>
+        `
+      },
+      2: {
+        title: 'Capa 2: Enlace de datos',
+        html: `
+          <p><strong>Funciones:</strong> Entrega de tramas en el mismo medio, control de acceso y corrección de errores local.</p>
+          <p><strong>Ejemplos:</strong> Ethernet, direcciones MAC, PPP.</p>
+        `
+      },
+      1: {
+        title: 'Capa 1: Física',
+        html: `
+          <p><strong>Funciones:</strong> Transmisión de bits por el medio físico.</p>
+          <p><strong>Ejemplos:</strong> Cables UTP/FO, conectores, niveles de señal.</p>
+        `
+      }
+    };
+
+    // Delegación de eventos: abre modal con info de la capa clicada
+    osiList.addEventListener('click', (e) => {
+      const item = e.target.closest('.osi-item');
+      if (!item) return;
+      const layer = item.getAttribute('data-layer');
+      const data = osiData[layer];
+      if (data) openModal(data.title, data.html);
+    });
+
+    // -------------------------------
+    // QUIZ: REVISAR RESPUESTAS Y CALCULAR PUNTAJE
+    // -------------------------------
+    const checkQuizBtn = document.getElementById('checkQuiz');  // Botón para revisar
+    const resetQuizBtn = document.getElementById('resetQuiz');  // Botón para reiniciar
+    const scoreText = document.getElementById('scoreText');     // Elemento para puntaje
+    const feedbackText = document.getElementById('feedbackText'); // Mensaje de feedback
+
+    // Claves correctas del quiz (editable: cambiar valores para modificar respuestas)
+    const quizAnswers = {
+      q1: 'a', // CPU
+      q2: 'b', // Switch
+      q3: 'b', // DHCP
+      q4: 'b', // Capa 4 (Transporte)
+      q5: 'c'  // Estrella
+    };
+
+    // Función que calcula el puntaje en base a las respuestas seleccionadas
+    function calculateScore() {
+      let score = 0;
+      let total = Object.keys(quizAnswers).length;
+
+      // Recorre cada pregunta y compara con la respuesta correcta
+      for (const qid of Object.keys(quizAnswers)) {
+        const selected = document.querySelector(`input[name="${qid}"]:checked`);
+        if (selected && selected.value === quizAnswers[qid]) {
+          score++;
+        }
+      }
+      return { score, total };
+    }
+
+    // Muestra resultados y mensajes de feedback
+    checkQuizBtn.addEventListener('click', () => {
+      const { score, total } = calculateScore();
+      scoreText.textContent = `Puntaje: ${score}/${total}`;
+
+      // Feedback simple basado en puntaje
+      feedbackText.classList.remove('ok', 'bad');
+      if (score === total) {
+        feedbackText.textContent = '¡Excelente! Todas correctas.';
+        feedbackText.classList.add('ok');
+      } else if (score >= Math.ceil(total * 0.6)) {
+        feedbackText.textContent = '¡Bien! Revisa las dudas y vuelve a intentar.';
+        feedbackText.classList.add('ok');
+      } else {
+        feedbackText.textContent = 'Sigue practicando. Revisa las secciones de teoría.';
+        feedbackText.classList.add('bad');
+      }
+    });
+
+    // Reinicia el quiz (desmarca radios y resetea texto)
+    resetQuizBtn.addEventListener('click', () => {
+      document.querySelectorAll('#quizBlock input[type="radio"]').forEach(r => r.checked = false);
+      scoreText.textContent = 'Puntaje: 0/5';
+      feedbackText.textContent = '';
+      feedbackText.classList.remove('ok', 'bad');
+    });
+
+    // -------------------------------
+    // GLOSARIO: BÚSQUEDA EN TIEMPO REAL
+    // -------------------------------
+    const searchInput = document.getElementById('searchInput');   // Input de búsqueda
+    const glosarioList = document.getElementById('glosarioList'); // Contenedor de términos
+
+    // Filtra los términos por coincidencia en nombre o descripción
+    function filterGlosario(query) {
+      const q = query.trim().toLowerCase();
+      glosarioList.querySelectorAll('.term').forEach(term => {
+        const title = term.querySelector('h4').textContent.toLowerCase();
+        const desc = term.querySelector('p').textContent.toLowerCase();
+        const match = title.includes(q) || desc.includes(q);
+        term.style.display = match ? '' : 'none';
+      });
+    }
+
+    // Evento input para filtrar mientras el usuario escribe
+    searchInput.addEventListener('input', (e) => {
+      filterGlosario(e.target.value);
+    });
+
+    // =========================================================
+    // NOTAS DE EDICIÓN RÁPIDA (Orientación dentro del JS)
+    // - Para cambiar la información del proyecto, edita el HTML
+    //   dentro de openInfoButtons (variable infoHTML).
+    // - Para cambiar las respuestas del quiz, edita quizAnswers.
+    // - Para modificar textos de OSI, edita el objeto osiData.
+    // =========================================================
+  </script>
+  <script src='https://cdn.jotfor.ms/agent/embedjs/019aad8c95f6774fb99c93d9e3b83f25bbfc/embed.js'>
+</script>
+</body>
+</html>
